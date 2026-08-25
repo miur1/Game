@@ -1,7 +1,8 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Game</title>
+    <title>Game Pertamaku</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #222; }
     </style>
@@ -12,6 +13,7 @@
 
         kaboom({ background: [34, 34, 34] });
 
+        // Karakter Utama (Kotak Biru)
         const player = add([
             rect(40, 40),
             color(0, 0, 255),
@@ -20,8 +22,46 @@
             anchor("center")
         ]);
 
+        // Menggerakkan karakter mengikuti geseran jari
         onTouchMove((id, posisiJari) => {
             player.moveTo(posisiJari);
+        });
+
+        // Auto-Shoot (Menembak Otomatis ke atas)
+        loop(0.5, () => {
+            add([
+                rect(8, 16),
+                color(255, 255, 0),
+                pos(player.pos),
+                anchor("center"),
+                area(),
+                move(UP, 400),
+                "bullet"
+            ]);
+        });
+
+        // --- FITUR BARU: Musuh (Kotak Merah) ---
+        // Memunculkan musuh baru setiap 1 detik
+        loop(1, () => {
+            add([
+                rect(30, 30),
+                color(255, 0, 0),         // Warna merah
+                pos(rand(0, width()), 0), // Muncul dari atas layar secara acak
+                anchor("center"),
+                area(),
+                "enemy"                   // Menandai objek sebagai musuh
+            ]);
+        });
+
+        // Musuh bergerak mengejar posisi player
+        onUpdate("enemy", (enemy) => {
+            enemy.moveTo(player.pos, 120); // Kecepatan kejar 120
+        });
+
+        // Jika peluru mengenai musuh, hancurkan keduanya
+        onCollide("bullet", "enemy", (bullet, enemy) => {
+            destroy(bullet);
+            destroy(enemy);
         });
     </script>
 </body>
