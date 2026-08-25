@@ -7,3 +7,4 @@ let expCount = 0;
 let level = 1;
 // ... (dan seterusnya sampai kodenya habis di bagian lanjutkanGame() ) ...
 
+import { tampilkanMenuUpgrade } from "./upgrade.js";
