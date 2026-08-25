@@ -3,7 +3,6 @@
 <head>
     <title>Game Pertamaku</title>
     <style>
-        /* Tambahan touch-action dan user-select agar browser HP tidak ngaco saat diketuk */
         body { 
             margin: 0; 
             overflow: hidden; 
@@ -35,17 +34,15 @@
             pos(center()),
             area(),
             anchor("center"),
-            "player" // <--- INI TADI KETINGGALAN! Penanda bahwa ini adalah player
+            "player"
         ]);
 
-        // Supaya saat layar diketuk (tap), karakter juga langsung pindah
-        onTouchStart((id, posisiJari) => {
-            player.moveTo(posisiJari);
-        });
-
-        // Supaya saat jari digeser, karakter mengikuti
-        onTouchMove((id, posisiJari) => {
-            player.moveTo(posisiJari);
+        // --- PERBAIKAN KONTROL HP ---
+        // Karakter akan mengikuti posisi jari selama layar disentuh/ditekan
+        onUpdate(() => {
+            if (isMouseDown()) {
+                player.moveTo(mousePos());
+            }
         });
 
         loop(0.5, () => {
@@ -90,7 +87,6 @@
             ]);
         });
 
-        // Sistem ambil EXP sekarang sudah bisa jalan!
         onCollide("player", "exp", (p, expObj) => {
             destroy(expObj);
             expCount += 1;
