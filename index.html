@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +12,16 @@
 
         kaboom({ background: [34, 34, 34] });
 
-        // Karakter Utama (Kotak Biru)
+        // --- FITUR BARU: UI Teks Level & EXP ---
+        let expCount = 0;
+        let level = 1;
+        const uiText = add([
+            text("LVL: 1  EXP: 0", { size: 24 }),
+            pos(20, 20),
+            color(255, 255, 255),
+            fixed() // Memastikan teks tetap di posisi atas layar
+        ]);
+
         const player = add([
             rect(40, 40),
             color(0, 0, 255),
@@ -22,12 +30,10 @@
             anchor("center")
         ]);
 
-        // Menggerakkan karakter mengikuti geseran jari
         onTouchMove((id, posisiJari) => {
             player.moveTo(posisiJari);
         });
 
-        // Auto-Shoot (Menembak Otomatis ke atas)
         loop(0.5, () => {
             add([
                 rect(8, 16),
@@ -40,29 +46,53 @@
             ]);
         });
 
-        // --- FITUR BARU: Musuh (Kotak Merah) ---
-        // Memunculkan musuh baru setiap 1 detik
         loop(1, () => {
             add([
                 rect(30, 30),
-                color(255, 0, 0),         // Warna merah
-                pos(rand(0, width()), 0), // Muncul dari atas layar secara acak
+                color(255, 0, 0),
+                pos(rand(0, width()), 0),
                 anchor("center"),
                 area(),
-                "enemy"                   // Menandai objek sebagai musuh
+                "enemy"
             ]);
         });
 
-        // Musuh bergerak mengejar posisi player
         onUpdate("enemy", (enemy) => {
-            enemy.moveTo(player.pos, 120); // Kecepatan kejar 120
+            enemy.moveTo(player.pos, 120);
         });
 
-        // Jika peluru mengenai musuh, hancurkan keduanya
+        // Modifikasi: Musuh hancur dan meninggalkan EXP
         onCollide("bullet", "enemy", (bullet, enemy) => {
+            const posisiMusuh = enemy.pos; // Simpan posisi musuh saat mati
             destroy(bullet);
             destroy(enemy);
+
+            // Munculkan kotak EXP warna hijau
+            add([
+                rect(12, 12),
+                color(0, 255, 0),
+                pos(posisiMusuh),
+                anchor("center"),
+                area(),
+                "exp"
+            ]);
         });
+
+        // --- FITUR BARU: Player ambil EXP ---
+        onCollide("player", "exp", (p, expObj) => {
+            destroy(expObj); // Hilangkan EXP dari layar
+            expCount += 1;   // Tambah EXP
+            
+            // Cek jika EXP sudah capai 5, maka Naik Level
+            if (expCount >= 5) {
+                level += 1;
+                expCount = 0; // Reset EXP kembali ke 0
+            }
+            
+            // Perbarui teks di layar
+            uiText.text = `LVL: ${level}  EXP: ${expCount}`;
+        });
+
     </script>
 </body>
 </html>
