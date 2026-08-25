@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #222; }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs";
+
+        kaboom({ background: [34, 34, 34] });
+
+        const player = add([
+            rect(40, 40),
+            color(0, 0, 255),
+            pos(center()),
+            area(),
+            anchor("center")
+        ]);
+
+        onTouchMove((id, posisiJari) => {
+            player.moveTo(posisiJari);
+        });
+    </script>
+</body>
+</html>
