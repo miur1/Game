@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Game Pertamaku</title>
+    <title>gabut</title>
     <style>
         body { 
             margin: 0; 
@@ -14,91 +14,7 @@
     </style>
 </head>
 <body>
-    <script type="module">
-        import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs";
-
-        kaboom({ background: [34, 34, 34] });
-
-        let expCount = 0;
-        let level = 1;
-        const uiText = add([
-            text("LVL: 1  EXP: 0", { size: 24 }),
-            pos(20, 20),
-            color(255, 255, 255),
-            fixed()
-        ]);
-
-        const player = add([
-            rect(40, 40),
-            color(0, 0, 255),
-            pos(center()),
-            area(),
-            anchor("center"),
-            "player"
-        ]);
-
-        // --- PERBAIKAN KONTROL HP ---
-        // Karakter akan mengikuti posisi jari selama layar disentuh/ditekan
-        onUpdate(() => {
-            if (isMouseDown()) {
-                player.moveTo(mousePos());
-            }
-        });
-
-        loop(0.5, () => {
-            add([
-                rect(8, 16),
-                color(255, 255, 0),
-                pos(player.pos),
-                anchor("center"),
-                area(),
-                move(UP, 400),
-                "bullet"
-            ]);
-        });
-
-        loop(1, () => {
-            add([
-                rect(30, 30),
-                color(255, 0, 0),
-                pos(rand(0, width()), 0),
-                anchor("center"),
-                area(),
-                "enemy"
-            ]);
-        });
-
-        onUpdate("enemy", (enemy) => {
-            enemy.moveTo(player.pos, 120);
-        });
-
-        onCollide("bullet", "enemy", (bullet, enemy) => {
-            const posisiMusuh = enemy.pos;
-            destroy(bullet);
-            destroy(enemy);
-
-            add([
-                rect(12, 12),
-                color(0, 255, 0),
-                pos(posisiMusuh),
-                anchor("center"),
-                area(),
-                "exp"
-            ]);
-        });
-
-        onCollide("player", "exp", (p, expObj) => {
-            destroy(expObj);
-            expCount += 1;
-            
-            if (expCount >= 5) {
-                level += 1;
-                expCount = 0;
-            }
-            
-            uiText.text = `LVL: ${level}  EXP: ${expCount}`;
-        });
-
-    </script>
+    <!-- Sekarang HTML-nya bersih! Semua logika game ada di main.js -->
+    <script type="module" src="./main.js"></script>
 </body>
 </html>
