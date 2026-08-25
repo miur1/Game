@@ -3,7 +3,15 @@
 <head>
     <title>Game Pertamaku</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #222; }
+        /* Tambahan touch-action dan user-select agar browser HP tidak ngaco saat diketuk */
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: #222; 
+            touch-action: none; 
+            -webkit-user-select: none;
+            user-select: none;
+        }
     </style>
 </head>
 <body>
@@ -12,14 +20,13 @@
 
         kaboom({ background: [34, 34, 34] });
 
-        // --- FITUR BARU: UI Teks Level & EXP ---
         let expCount = 0;
         let level = 1;
         const uiText = add([
             text("LVL: 1  EXP: 0", { size: 24 }),
             pos(20, 20),
             color(255, 255, 255),
-            fixed() // Memastikan teks tetap di posisi atas layar
+            fixed()
         ]);
 
         const player = add([
@@ -27,9 +34,16 @@
             color(0, 0, 255),
             pos(center()),
             area(),
-            anchor("center")
+            anchor("center"),
+            "player" // <--- INI TADI KETINGGALAN! Penanda bahwa ini adalah player
         ]);
 
+        // Supaya saat layar diketuk (tap), karakter juga langsung pindah
+        onTouchStart((id, posisiJari) => {
+            player.moveTo(posisiJari);
+        });
+
+        // Supaya saat jari digeser, karakter mengikuti
         onTouchMove((id, posisiJari) => {
             player.moveTo(posisiJari);
         });
@@ -61,13 +75,11 @@
             enemy.moveTo(player.pos, 120);
         });
 
-        // Modifikasi: Musuh hancur dan meninggalkan EXP
         onCollide("bullet", "enemy", (bullet, enemy) => {
-            const posisiMusuh = enemy.pos; // Simpan posisi musuh saat mati
+            const posisiMusuh = enemy.pos;
             destroy(bullet);
             destroy(enemy);
 
-            // Munculkan kotak EXP warna hijau
             add([
                 rect(12, 12),
                 color(0, 255, 0),
@@ -78,18 +90,16 @@
             ]);
         });
 
-        // --- FITUR BARU: Player ambil EXP ---
+        // Sistem ambil EXP sekarang sudah bisa jalan!
         onCollide("player", "exp", (p, expObj) => {
-            destroy(expObj); // Hilangkan EXP dari layar
-            expCount += 1;   // Tambah EXP
+            destroy(expObj);
+            expCount += 1;
             
-            // Cek jika EXP sudah capai 5, maka Naik Level
             if (expCount >= 5) {
                 level += 1;
-                expCount = 0; // Reset EXP kembali ke 0
+                expCount = 0;
             }
             
-            // Perbarui teks di layar
             uiText.text = `LVL: ${level}  EXP: ${expCount}`;
         });
 
